@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 const SignIn = () => {
   const router = useRouter();
   const hanleLoginWithGoogle = () => {
-    router.push('http://localhost:3002/api/v1/auth/google')
+    router.push('https://5c26-14-186-95-201.ngrok-free.app/api/v1/auth/google')
   }
   return (
     <div className="flex items-center justify-center p-8 relative">
