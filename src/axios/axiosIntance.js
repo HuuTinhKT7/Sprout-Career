@@ -1,6 +1,6 @@
 import axios from 'axios';
 const axiosInstance = axios.create({
-  baseURL: process.env.SERVER_URL || 'http://localhost:8386/api/v1',
+  baseURL: process.env.SERVER_URL || 'http://localhost:3002/api/v1',
   timeout: 10000,
   withCredentials: true, 
   headers: {

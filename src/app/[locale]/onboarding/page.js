@@ -48,23 +48,27 @@ const OnboardingPage = () => {
     address: '',
   })
   
-   useEffect(() => {
-    const checkIsOnboarded = async () => {
+   useEffect(() => {  
+    const checkAuthAndOnboarding = async () => {
       try {
-        setIsLoading(true)
-        const { data: res } = await axiosInstance.get('/users/check-isOnboarded');
-        const { isOnboarded, userType } = res.data;
-        if (isOnboarded) {
-          return router.push(`/dashboard/${userType.toLowerCase()}`);
-        }
-      } catch (error) {
-        console.error('Failed to check onboarding status', error);
-      } finally {
-        setIsLoading(false)
+        const { data } = await axiosInstance.get('/auth/session',{withCredentials: true,});
+        if (data.user.isOnboarded) {
+        router.push(`/dashboard/${data.user.userType.toLowerCase()}`)
       }
+      else{
+      setIsLoading(false);
+    }
+      } catch (error) {
+      if (error.response?.status === 401) {
+        // Token không hợp lệ, có thể do cookie chưa được thiết lập
+        setIsLoading(false); // Vẫn render OnboardingPage, chờ cookie được thiết lập
+      } else {
+        setIsLoading(false);
+      }
+    }
     };
     
-    checkIsOnboarded();
+    checkAuthAndOnboarding();
   }, [router]);
 
   if (isLoading) {
@@ -129,11 +133,13 @@ const OnboardingPage = () => {
           workExperiences: workExperienceData
         });
       }
+      await axiosInstance.patch('/auth/update-onboarded', {
+      isOnboarded: true,})
   
       router.push('/dashboard/candidate');
     } catch (error) {
       console.error('Error during profile submission:', error);
-
+      router.push('/error?message=profile_submission_failed');
     } finally {
       setSubmitting(false);
     }
@@ -163,10 +169,14 @@ const OnboardingPage = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      
+      await axiosInstance.patch('/auth/update-onboarded', {
+      isOnboarded: true,
+    });
       router.push('/dashboard/employer');
     } catch(error) {
       console.error('Error during profile submission:', error);
+    // Chuyển hướng đến trang lỗi thay vì /login
+    router.push('/error?message=profile_submission_failed');
     } finally {
       setSubmitting(false);
     }
