@@ -104,7 +104,7 @@ const OnboardingPage = () => {
         profileFormData.append('profilePhoto', candidateData.profilePhoto); 
       }
 
-      await axiosInstance.post('/candidate/profile', profileFormData, {
+      await axiosInstance.post('/api/v1/candidate/profile', profileFormData, {
         headers: {
           'Content-Type': 'multipart/form-data', 
         },
@@ -117,7 +117,7 @@ const OnboardingPage = () => {
           startDate: edu.startYear,
           endDate: edu.endYear || null
         }));
-        await axiosInstance.post('/candidate/education', {
+        await axiosInstance.post('/api/v1/candidate/education', {
           educations: educationData
         });
       }
@@ -129,17 +129,17 @@ const OnboardingPage = () => {
           startDate: work.startDate,
           endDate: work.endDate || null
         }));
-        await axiosInstance.post('/candidate/work-experience', {
+        await axiosInstance.post('/api/v1/candidate/work-experience', {
           workExperiences: workExperienceData
         });
       }
-      await axiosInstance.patch('/auth/update-onboarded', {
+      await axiosInstance.patch('/api/v1/auth/update-onboarded', {
       isOnboarded: true,})
   
       router.push('/dashboard/candidate');
     } catch (error) {
       console.error('Error during profile submission:', error);
-      router.push('/error?message=profile_submission_failed');
+      //router.push('/error?message=profile_submission_failed');
     } finally {
       setSubmitting(false);
     }
@@ -164,12 +164,12 @@ const OnboardingPage = () => {
         formData.append('companyLogo', employerData.companyLogo);
       }
 
-      await axiosInstance.post('/employer', formData, {
+      await axiosInstance.post('/api/v1/employer', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      await axiosInstance.patch('/auth/update-onboarded', {
+      await axiosInstance.patch('/api/v1/auth/update-onboarded', {
       isOnboarded: true,
     });
       router.push('/dashboard/employer');
