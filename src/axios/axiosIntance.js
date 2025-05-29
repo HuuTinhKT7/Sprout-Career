@@ -9,13 +9,20 @@ const axiosInstance = axios.create({
     'ngrok-skip-browser-warning': 'true' // Bỏ qua cảnh báo ngrok
   },
 });
+axiosInstance.defaults.withCredentials = true;
+axiosInstance.defaults.headers.common['Accept'] = 'application/json';
+axiosInstance.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 
 
 axiosInstance.interceptors.request.use(
     async (config) => {
       const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token')
       if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      if (config.data instanceof FormData) {
+        config.data.append('access_token', token);
+      } else {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }      
         return config;
 

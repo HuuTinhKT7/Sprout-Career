@@ -51,7 +51,7 @@ const OnboardingPage = () => {
    useEffect(() => {  
     const checkAuthAndOnboarding = async () => {
       try {
-        const { data } = await axiosInstance.get('/auth/session',{withCredentials: true,});
+        const { data } = await axiosInstance.get('api/v1/auth/session',{withCredentials: true,});
         if (data.user.isOnboarded) {
         router.push(`/dashboard/${data.user.userType.toLowerCase()}`)
       }
@@ -103,6 +103,10 @@ const OnboardingPage = () => {
       if (candidateData.profilePhoto) {
         profileFormData.append('profilePhoto', candidateData.profilePhoto); 
       }
+       const token = localStorage.getItem('access_token');
+    if (token) {
+      profileFormData.append('access_token', token);
+    }
 
       await axiosInstance.post('/api/v1/candidate/profile', profileFormData, {
         headers: {
